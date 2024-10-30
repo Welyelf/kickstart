@@ -19,14 +19,15 @@ class RequestNew extends Component {
         event.preventDefault();
 
         this.setState({ loading: true, errorMessage: '' });
+        const campaign = Campaign(this.props.address);
+        const { description, value, recipient } =  this.state;
+
         try {
             const accounts = await web3.eth.getAccounts();
-            await factory.methods
-                .createRequest(this.state.minimumContribution)
-                .send({
-                    from: accounts[0]
-                });
-            Router.pushRoute('/');
+            await campaign.methods
+                .createRequest( description, web3.utils.toWei(value, 'ether'),recipient)
+                .send({ from: accounts[0] });
+            Router.replaceRoute(`/campaigns/${this.props.address}/requests`);
         } catch (err) {
             this.setState({ errorMessage: err.message })
         }
@@ -40,6 +41,9 @@ class RequestNew extends Component {
     render() {
         return (
             <Layout>
+                <Link route={`/campaigns/${this.props.address}/requests`}>
+                    Back
+                </Link>
                 <h3>Create a request</h3>
                 <Form onSubmit={this.onSubmit} error={!!this.state.errorMessage}>
                     <FormField>
@@ -74,7 +78,7 @@ class RequestNew extends Component {
                         />
                     </FormField>
                     <Message error header="Opps!" content={this.state.errorMessage} />
-                    <Button primary type='submit'>Create</Button>
+                    <Button loading={this.state.loading} primary type='submit'>Create</Button>
                 </Form>
             </Layout>
         )

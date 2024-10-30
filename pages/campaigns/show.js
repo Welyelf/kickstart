@@ -52,7 +52,7 @@ class CampaignShow extends Component {
       },
       {
         header: approversCount,
-        meta: 'Number of Approvers',
+        meta: 'Number of Donators',
         description: 'Number of people who have already donated to this campaign.',
       },
       {
